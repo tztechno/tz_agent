@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>一発フォルダ読み込み</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+        
+        /* 💡 ボタンを大きく押しやすく */
+        .btn-load {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto 20px;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-load:hover { background: #0056b3; }
+
+        /* 💡 3列のグリッド表示 */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .image-item img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <label class="btn-load">
+        📁 screenshots フォルダを開く
+        <input type="file" id="dir-input" webkitdirectory directory multiple style="display: none;">
+    </label>
+
+    <div class="image-grid" id="grid"></div>
+
+    <script>
+        const dirInput = document.getElementById('dir-input');
+        const grid = document.getElementById('grid');
+
+        dirInput.addEventListener('change', (e) => {
+            grid.innerHTML = ''; // 前の画像をクリア
+            
+            // 選択されたフォルダ内のファイルをループ処理
+            Array.from(e.target.files).forEach(file => {
+                // 画像ファイルだけを対象にする
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        const item = document.createElement('div');
+                        item.className = 'image-item';
+                        
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.alt = file.name;
+                        
+                        item.appendChild(img);
+                        grid.appendChild(item);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
